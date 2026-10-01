@@ -60,11 +60,11 @@
 <aside class="sidebar"><div class="brand"><h1>PRESTAR</h1><p>Coax Training</p></div><nav class="nav"><a class="active" href="#" data-nav="home">⌂ Home</a><a href="#topics" data-nav="topics">▦ All Topics</a><a href="#" data-nav="progress">▥ Progress</a><a href="#" data-nav="practice">☑ Practice Tests</a><a href="#" data-nav="notes">📝 Notes</a><a href="#" data-nav="resources">📁 Resources</a><a href="#" data-nav="settings">⚙ Settings</a></nav></aside>
 <main class="main"><div class="topbar"><div class="search"><span>⌕</span><input id="topic-search" type="text" placeholder="Search topics, terms, devices..."></div><button class="progress clickable" id="progress-chip"><span id="progress-count">0/13</span><small>Topics completed</small></button><button class="avatar" id="avatar-home" type="button">MV</button></div> <section class="hero"><div><h2>Prestar Coax Training</h2><p>Learn • Practice • Be Ready in the Field</p></div></section>
 <div class="section-head" id="topics-head"><h3>Training Topics</h3><div class="filters"><button class="on" data-filter="all">All Topics</button><button data-filter="installation">Installation</button><button data-filter="rf">RF &amp; Signal</button><button data-filter="troubleshooting">Troubleshooting</button></div></div>
-<section class="grid" id="grid"></section>
+<section class="grid" id="grid"></section><section class="utility-area hidden" id="utility-area"></section>
 <section class="lesson-shell" id="lesson-shell"><div class="lesson-top"><div class="lesson-info"><div class="ico c1" id="lesson-icon">🦺</div><div><h2 id="lesson-title"></h2><p id="lesson-subtitle"></p></div></div><button class="backbtn" id="back">← Back to Topics</button></div><div class="lesson-body"><div class="lesson-status"><strong id="counter"></strong><div class="timer-chip" id="timer"></div></div><div class="progress-line"><span id="prog"></span></div><div class="step-card" id="step"></div><div class="actions"><button class="btn secondary" id="prev">← Previous</button><div><button class="btn ghost" id="restart">Restart Lesson</button> <button class="btn primary" id="next" disabled>Next →</button></div></div></div></section>
 </main></div>
 <script>
-let READ=6;
+let READ=0;
 const topics=[
 ['Safety','Ladder, pole, hard hat and field safety','🦺','c1','safety','installation'],
 ['Ingress','Identify, isolate and correct ingress','📡','c2','ingress','rf'],
@@ -242,18 +242,17 @@ function renderStep(){
   if(s.quiz)bindQuiz(s.quiz)
 }
 function startTimer(){
-  let n=READ;
-  next.disabled=true;
+  clearInterval(timer);
   timerEl.classList.remove('ready');
-  timerEl.textContent=`Next unlocks in ${n}s`;
-  timer=setInterval(()=>{
-    n--;
-    if(n<=0){
-      clearInterval(timer);
-      if(lessons[key][idx].quiz){timerEl.textContent='Answer all 6 questions to continue';updateQuiz()}
-      else{next.disabled=false;timerEl.textContent='Ready — continue';timerEl.classList.add('ready')}
-    }else timerEl.textContent=`Next unlocks in ${n}s`;
-  },1000)
+  if(lessons[key][idx].quiz){
+    next.disabled=true;
+    timerEl.textContent='Answer all 6 questions to continue';
+    updateQuiz();
+  }else{
+    next.disabled=false;
+    timerEl.textContent='Ready — continue';
+    timerEl.classList.add('ready');
+  }
 }
 function quizHtml(qk){
   return quizzes[qk].map((q,qi)=>`<div class="quiz" data-q="${qi}"><h4>${qi+1}. ${q[0]}</h4><div class="opts">${q[1].map((a,ai)=>`<button data-a="${ai}">${String.fromCharCode(65+ai)}. ${a}</button>`).join('')}</div><div class="feedback"></div></div>`).join('')+`<div class="summary" id="summary">Quiz progress: 0/6 answered</div>`
@@ -283,7 +282,7 @@ function renderPanel(panel){
     html=`<article class="utility-card"><h3>Resources</h3><p>Quick links and useful reference items.</p><a class="resource-link" href="https://youtu.be/lNU__9xcQAk" target="_blank" rel="noopener">Connector demo video <span>↗</span></a><div class="tag-list"><span class="tag-pill">Voltage detector</span><span class="tag-pill">Hard hat</span><span class="tag-pill">Compression tool</span><span class="tag-pill">Stripper with active stop</span><span class="tag-pill">MDU lockbox safety</span></div></article>`;
   }
   if(panel==='settings'){
-    html=`<article class="utility-card"><h3>Settings</h3><p>Choose how long each step stays locked before the Next button becomes available.</p><div class="btn-grid"><button class="utility-btn secondary" data-read="6">6 sec</button><button class="utility-btn secondary" data-read="10">10 sec</button><button class="utility-btn secondary" data-read="15">15 sec</button><button class="utility-btn ghost" id="reset-progress-btn">Reset Progress</button></div><p style="margin-top:12px">Current reading timer: <strong>${READ} seconds</strong></p></article>`;
+    html=`<article class="utility-card"><h3>Settings</h3><p>Reading delay is currently disabled. We can add timed slide progression back at the end of the project.</p><div class="btn-grid"><button class="utility-btn ghost" id="reset-progress-btn">Reset Progress</button></div></article>`;
   }
   utility.innerHTML=html;
   utility.classList.toggle('hidden', !html);
@@ -291,7 +290,6 @@ function renderPanel(panel){
 }
 function bindPanelActions(){
   utility.querySelectorAll('[data-quiz-open]').forEach(b=>b.onclick=()=>openLessonQuiz(b.dataset.quizOpen));
-  utility.querySelectorAll('[data-read]').forEach(b=>b.onclick=()=>{READ=Number(b.dataset.read);renderPanel('settings')});
   const resetBtn=document.getElementById('reset-progress-btn');
   if(resetBtn)resetBtn.onclick=resetProgress;
 }
