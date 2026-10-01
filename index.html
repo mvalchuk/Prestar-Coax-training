@@ -96,14 +96,14 @@ const quizzes={safety:[
 ['If noise disappears after disconnecting one branch, what does that tell you?',['The meter is broken','The tap is always bad','That branch is likely carrying the ingress','Nothing useful'],2],
 ['After fixing ingress, what should you do?',['Leave immediately','Verify spectrum and signal again','Only reboot the modem','Remove terminators'],1],
 ['Which troubleshooting path is correct?',['Device → outlet → splitter only','Tap → drop → ground block → splitter → outlet → device','Modem → TV → Wi‑Fi','Splitter → tap only'],1]
-
-,connector:[
+],connector:[
 ['What does the active stop on the stripper help with?',['It changes the signal level','It keeps the prep and copper stinger length consistent','It replaces the compression tool','It shortens the drop automatically'],1],
 ['In the RG6 photo, which connector is the outside connector?',['The left connector','The right connector','Both are inside connectors','Neither is RG6'],0],
 ['When should RG11 be used?',['For every outlet','For runs over 150 ft and up to 300 ft','Only for CAT5 wiring','Only for wall plates'],1],
 ['What is a short connector?',['A connector that is too expensive','A connector where braid whiskers touch the center conductor','Any connector on RG11','A loose wall plate'],1],
 ['What kind of issue can a CAT5 loop create?',['A normal modem reset only','A network loop and service problems','Better Wi-Fi coverage','More coax signal'],1],
-['What should you do if a connector does not look right?',['Leave it if the signal still works','Tape it and move on','Cut it off and redo it','Push it harder into the outlet'],2]]]};
+['What should you do if a connector does not look right?',['Leave it if the signal still works','Tape it and move on','Cut it off and redo it','Push it harder into the outlet'],2]
+]};
 let key=null,idx=0,timer=null,answers={};
 const grid=document.getElementById('grid'),shell=document.getElementById('lesson-shell'),head=document.getElementById('topics-head'),step=document.getElementById('step'),next=document.getElementById('next'),prev=document.getElementById('prev'),timerEl=document.getElementById('timer');
 function renderCards(){grid.innerHTML='';topics.forEach(t=>{let d=document.createElement('article');d.className='card';d.innerHTML=`<div class="ico ${t[3]}">${t[2]}</div><div class="body"><div class="title">${t[0]}</div><div class="desc">${t[1]}</div><div class="bar"></div><div class="meta">${t[4]?'Open lesson':'Coming next'}</div></div><div class="chev">›</div>`;if(t[4])d.onclick=()=>openLesson(t[4]);grid.appendChild(d)})}
